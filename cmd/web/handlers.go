@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	//"html/template"
+
 	//"log"
 	"errors"
 	"islamghany/snippetbox/pkg/models"
@@ -23,25 +23,13 @@ func (app *application) homeHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	for _, snippet := range snippets {
-		fmt.Fprintf(w, "%v\n", snippet)
-	}
-	// files := []string{
-	// 	"./ui/html/home.page.tmpl",
-	// 	"./ui/html/base.layout.tmpl",
-	// 	"./ui/html/footer.partial.tmpl",
+	// for _, snippet := range snippets {
+	// 	fmt.Fprintf(w, "%v\n", snippet)
 	// }
-	// ts, err := template.ParseFiles(files...)
-	// if err != nil {
-	// 	app.serverError(w, err)
-	// 	return
-	// }
-
-	// err = ts.Execute(w, nil)
-	// if err != nil {
-	// 	app.serverError(w, err)
-	// 	return
-	// }
+	// Use the new render helper.
+	app.render(w, r, "home.page.tmpl", &templateData{
+		Snippets: snippets,
+	})
 }
 
 func (app *application) snippetHandler(w http.ResponseWriter, r *http.Request) {
@@ -60,7 +48,11 @@ func (app *application) snippetHandler(w http.ResponseWriter, r *http.Request) {
 		}
 		return
 	}
-	fmt.Fprintf(w, "%v", snippet)
+
+	// Use the new render helper.
+	app.render(w, r, "show.page.tmpl", &templateData{
+		Snippet: snippet,
+	})
 }
 
 func (app *application) createSnippetHandler(w http.ResponseWriter, r *http.Request) {
