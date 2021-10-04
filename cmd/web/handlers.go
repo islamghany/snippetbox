@@ -15,7 +15,6 @@ func (app *application) homeHandler(w http.ResponseWriter, r *http.Request) {
 		app.notFound(w)
 		return
 	}
-
 	snippets, err := app.snippets.Latest()
 
 	if err != nil {
