@@ -10,11 +10,8 @@ import (
 	"strconv"
 )
 
-func (app *application) homeHandler(w http.ResponseWriter, r *http.Request) {
-	if r.URL.Path != "/" {
-		app.notFound(w)
-		return
-	}
+func (app *application) home(w http.ResponseWriter, r *http.Request) {
+
 	snippets, err := app.snippets.Latest()
 
 	if err != nil {
@@ -30,9 +27,13 @@ func (app *application) homeHandler(w http.ResponseWriter, r *http.Request) {
 		Snippets: snippets,
 	})
 }
+func (app *application) createSnippetForm(w http.ResponseWriter, r *http.Request) {
+	w.Write([]byte("Create a new snippet..."))
+}
 
-func (app *application) snippetHandler(w http.ResponseWriter, r *http.Request) {
-	id, err := strconv.Atoi(r.URL.Query().Get("id"))
+func (app *application) snippet(w http.ResponseWriter, r *http.Request) {
+
+	id, err := strconv.Atoi(r.URL.Query().Get(":id"))
 	if err != nil || id < 0 {
 		app.notFound(w)
 		return
@@ -54,14 +55,8 @@ func (app *application) snippetHandler(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
-func (app *application) createSnippetHandler(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodPost {
-		w.Header().Set("Allow", http.MethodPost)
-		// w.WriteHeader(405)
-		// w.Write([]byte("Method not allowed"))
-		app.clientError(w, http.StatusMethodNotAllowed)
-		return
-	}
+func (app *application) createSnippet(w http.ResponseWriter, r *http.Request) {
+
 	title := "O snail"
 	content := "O snail\nClimb Mount Fuji,\nBut slowly, slowly!\n\n– Kobayashi Issa"
 	expires := "7"
@@ -71,5 +66,5 @@ func (app *application) createSnippetHandler(w http.ResponseWriter, r *http.Requ
 		app.serverError(w, err)
 		return
 	}
-	http.Redirect(w, r, fmt.Sprintf("/snippet?id=%d", id), http.StatusSeeOther)
+	http.Redirect(w, r, fmt.Sprintf("/snippet/%d", id), http.StatusSeeOther)
 }
